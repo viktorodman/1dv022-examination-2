@@ -28,7 +28,6 @@ template.innerHTML = `
     background-color: yellow;
     font-size: 30px;
     padding: 10px;
-    text-align: center;
 }
 .quizAnswer {
     background-color: violet;
@@ -64,6 +63,10 @@ input {
         <span class="playerName">PLAYER: </span>
     </div>
     <div class="quizAnswer">
+        <div class="quizForm">
+          
+        </div>
+        <button>Submit</button>
     </div>
 </div>
 `
@@ -75,24 +78,31 @@ class QuizQuestion extends window.HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-    this._apiURL = 'http://vhost3.lnu.se:20080/question/1'
+    this._questionURL = 'http://vhost3.lnu.se:20080/question/1'
+    this._firstQuestion = 'http://vhost3.lnu.se:20080/question/1'
+    this._answerURL = undefined
     this._currentQuestion = undefined
-    this.answerDiv = this.shadowRoot.querySelector('.quizAnswer')
-    this.
+    this._answerForm = this.shadowRoot.querySelector('.quizForm')
+    this._button = this.shadowRoot.querySelector('.quizAnswer button')
+    this._textBox = undefined
   }
 
   async connectedCallback () {
     await this.getQuestion()
 
     this.createTextForm()
+    this._button.addEventListener('click', async event => {
+      console.log(await this.sendAnswer())
+    })
     this.setQuestion()
   }
 
   async getQuestion () {
-    const pro = await window.fetch(this._apiURL)
+    const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
 
     this._currentQuestion = res
+    this._answerURL = res.nextURL
   }
 
   setQuestion () {
@@ -101,15 +111,28 @@ class QuizQuestion extends window.HTMLElement {
     q.textContent = this._currentQuestion.question
   }
 
-  createTextForm () {
-    this.answerDiv.innerHTML = ''
-    const textBox = document.createElement('input')
-    const button = document.createElement('button')
-    button.textContent = 'Submit'
-    textBox.setAttribute('type', 'text')
-    this.answerDiv.appendChild(textBox)
-    this.answerDiv.appendChild(button)
+  async sendAnswer () {
+    const data = {
+      answer: this._textBox.value
+    }
 
+    const res = await window.fetch(this._answerURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+
+    return res.json()
+  }
+
+  createTextForm () {
+    this._answerForm.innerHTML = ''
+    const textBox = document.createElement('input')
+    textBox.setAttribute('type', 'text')
+    this._answerForm.appendChild(textBox)
+    this._textBox = textBox
   }
 }
 

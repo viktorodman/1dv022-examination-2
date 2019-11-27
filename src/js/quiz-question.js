@@ -28,10 +28,12 @@ template.innerHTML = `
     background-color: yellow;
     font-size: 30px;
     padding: 10px;
+    text-align: center;
 }
 .quizAnswer {
     background-color: violet;
     height: 40%;
+    text-align: center;
 }
 .question {
     margin: 0;
@@ -44,6 +46,9 @@ template.innerHTML = `
 p {
     padding: 0;
     margin: 0;
+}
+input {
+   
 }
 </style>
 
@@ -59,7 +64,6 @@ p {
         <span class="playerName">PLAYER: </span>
     </div>
     <div class="quizAnswer">
-        <p>hej</p>
     </div>
 </div>
 `
@@ -71,8 +75,10 @@ class QuizQuestion extends window.HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+    this._apiURL = 'http://vhost3.lnu.se:20080/question/1'
     this._currentQuestion = undefined
     this.answerDiv = this.shadowRoot.querySelector('.quizAnswer')
+    this.
   }
 
   async connectedCallback () {
@@ -83,7 +89,7 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   async getQuestion () {
-    const pro = await window.fetch('http://vhost3.lnu.se:20080/question/1')
+    const pro = await window.fetch(this._apiURL)
     const res = await pro.json()
 
     this._currentQuestion = res
@@ -97,6 +103,13 @@ class QuizQuestion extends window.HTMLElement {
 
   createTextForm () {
     this.answerDiv.innerHTML = ''
+    const textBox = document.createElement('input')
+    const button = document.createElement('button')
+    button.textContent = 'Submit'
+    textBox.setAttribute('type', 'text')
+    this.answerDiv.appendChild(textBox)
+    this.answerDiv.appendChild(button)
+
   }
 }
 

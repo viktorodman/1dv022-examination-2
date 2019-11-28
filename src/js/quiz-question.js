@@ -89,39 +89,61 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   async connectedCallback () {
-    await this.getQuestion()
-    this.createTextForm()
-
+    const question = await this.getQuestion()
+    this.setQuestion(question)
     this._button.addEventListener('click', async event => {
-      const result = await this.sendAnswer()
+      /* const result = await this.sendAnswer()
       this._questionURL = result.nextURL
       this.getQuestion()
+      this.setQuestion() */
+      // Get the answer
+      const answer = this.getAnswer()
+      // Send Answer
+      const result = await this.sendAnswer(answer)
+      const confirmAnswer = this.checkAnswer(result)
     })
   }
 
   async getQuestion () {
     const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
-    console.log(res)
-    console.log('hej')
     this._currentQuestion = res
     this._answerURL = res.nextURL
 
     if (res.alternatives) {
       this.createAltForm()
+      this._isAltQuestion = true
+    } else {
+      this.createTextForm()
+      this._isAltQuestion = false
     }
-    this.setQuestion()
+
+    return res.question
   }
 
-  setQuestion () {
-    const q = this.shadowRoot.querySelector('.question')
+  getAnswer () {
+    let answer = ''
 
-    q.textContent = this._currentQuestion.question
+    if (this._isAltQuestion) {
+      const radioButtons = this._answerForm.querySelectorAll('input')
+
+      radioButtons.forEach(button => {
+        if (button.checked) {
+          answer = button.value
+        }
+      })
+    } else {
+      const textForm = this._answerForm.querySelector('input')
+
+      answer = textForm.value
+    }
+
+    return answer
   }
 
-  async sendAnswer () {
+  async sendAnswer (myAnswer) {
     const data = {
-      answer: this._textBox.value
+      answer: myAnswer
     }
 
     const res = await window.fetch(this._answerURL, {
@@ -133,6 +155,19 @@ class QuizQuestion extends window.HTMLElement {
     })
 
     return res.json()
+  }
+
+  checkAnswer (answer) {
+    if (answer.nextURL) {
+      console.log('correct')
+    } else {
+      console.log('Wrong Answer')
+    }
+  }
+
+  setQuestion (question) {
+    const q = this.shadowRoot.querySelector('.question')
+    q.textContent = question
   }
 
   createTextForm () {

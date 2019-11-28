@@ -64,7 +64,6 @@ input {
     </div>
     <div class="quizAnswer">
         <div class="quizForm">
-          
         </div>
         <button>Submit</button>
     </div>
@@ -85,24 +84,33 @@ class QuizQuestion extends window.HTMLElement {
     this._answerForm = this.shadowRoot.querySelector('.quizForm')
     this._button = this.shadowRoot.querySelector('.quizAnswer button')
     this._textBox = undefined
+    this._answer = undefined
+    this._isAltQuestion = false
   }
 
   async connectedCallback () {
     await this.getQuestion()
-
     this.createTextForm()
+
     this._button.addEventListener('click', async event => {
-      console.log(await this.sendAnswer())
+      const result = await this.sendAnswer()
+      this._questionURL = result.nextURL
+      this.getQuestion()
     })
-    this.setQuestion()
   }
 
   async getQuestion () {
     const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
-
+    console.log(res)
+    console.log('hej')
     this._currentQuestion = res
     this._answerURL = res.nextURL
+
+    if (res.alternatives) {
+      this.createAltForm()
+    }
+    this.setQuestion()
   }
 
   setQuestion () {
@@ -128,11 +136,41 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   createTextForm () {
-    this._answerForm.innerHTML = ''
+    if (this._answerForm.childElementCount > 0) {
+      this.cleanForm()
+    }
     const textBox = document.createElement('input')
     textBox.setAttribute('type', 'text')
     this._answerForm.appendChild(textBox)
     this._textBox = textBox
+    console.log('hej')
+  }
+
+  createAltForm () {
+    const alt = this._currentQuestion.alternatives
+    console.log(Object.keys(alt))
+    if (this._answerForm.childElementCount > 0) {
+      console.log('clean')
+      this.cleanForm()
+    }
+
+    for (let i = 0; i < Object.keys(alt).length; i++) {
+      const radioButton = document.createElement('input')
+      const label = document.createElement('label')
+      label.textContent = Object.values(alt)[i]
+      radioButton.setAttribute('type', 'radio')
+      radioButton.name = 'Alternatives'
+      radioButton.value = Object.values(alt)[i]
+      console.log('loop')
+      this._answerForm.appendChild(label)
+      this._answerForm.appendChild(radioButton)
+    }
+  }
+
+  cleanForm () {
+    while (this._answerForm.hasChildNodes()) {
+      this._answerForm.removeChild(this._answerForm.firstChild)
+    }
   }
 }
 

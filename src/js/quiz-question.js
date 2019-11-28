@@ -100,7 +100,10 @@ class QuizQuestion extends window.HTMLElement {
       const answer = this.getAnswer()
       // Send Answer
       const result = await this.sendAnswer(answer)
-      const confirmAnswer = this.checkAnswer(result)
+      console.log(result)
+      this.checkAnswer(result)
+      const newQuestion = await this.getQuestion()
+      this.setQuestion(newQuestion)
     })
   }
 
@@ -117,12 +120,12 @@ class QuizQuestion extends window.HTMLElement {
       this.createTextForm()
       this._isAltQuestion = false
     }
-
+    console.log(res)
     return res.question
   }
 
   getAnswer () {
-    let answer = ''
+    let answer
 
     if (this._isAltQuestion) {
       const radioButtons = this._answerForm.querySelectorAll('input')
@@ -132,6 +135,7 @@ class QuizQuestion extends window.HTMLElement {
           answer = button.value
         }
       })
+      console.log(answer)
     } else {
       const textForm = this._answerForm.querySelector('input')
 
@@ -158,11 +162,15 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   checkAnswer (answer) {
-    if (answer.nextURL) {
+    let result = false
+    if (answer.message = 'Correct answer!') {
       console.log('correct')
+      this._questionURL = answer.nextURL
+      result = true
     } else {
       console.log('Wrong Answer')
     }
+    return result
   }
 
   setQuestion (question) {
@@ -195,7 +203,7 @@ class QuizQuestion extends window.HTMLElement {
       label.textContent = Object.values(alt)[i]
       radioButton.setAttribute('type', 'radio')
       radioButton.name = 'Alternatives'
-      radioButton.value = Object.values(alt)[i]
+      radioButton.value = Object.keys(alt)[i]
       console.log('loop')
       this._answerForm.appendChild(label)
       this._answerForm.appendChild(radioButton)

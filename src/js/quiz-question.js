@@ -2,11 +2,17 @@
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
+.wrapper {
+  width: 900px;
+  /* height: 500px; */
+  background-color: #333;
+  margin: 0 auto;
+  border-radius: 20px;
+  color: white;
+  text-align: center;
+}
 .quizContainer {
-    width: 900px;
-    height: 500px;
-    background-color: #333;
-    margin: 0 auto;
+   margin: 0 auto;
 }
 .quizHeader {
     /* width: 90%; */
@@ -48,37 +54,32 @@ p {
     margin: 0;
 }
 input {
-   margin-top: 50px;
-   width: 150px;
+  /*  width: 150px;
    height: 50px;
-   font-size: 30px;
+   font-size: 30px; */
+}
+label {
+  font-size: 30px;
 }
 button {
   margin-top: 10px;
+  margin-bottom: 10px;
   border: 2px solid white;
   font-size: 45px;
   color: white;
   background-color: black;
 }
 
-</style>
+input[type="text"] {
+    font-size:25px;
+}
 
-<div class="quizContainer">
-    <div class="quizHeader">
-        <p>Question: <span id="questionNumber"></span></p>
-    </div>
-    <div class="quizInfo">
-        <span class="timer">TIMER</span>
-        <span class="playerName">PLAYER: </span>
-    </div>
-    <div class="quizMain">
-        <p class="question"></p>
-    </div>
-    <div class="quizAnswer">
-        <div class="quizForm">
-        </div>
-        <button>Submit</button>
-    </div>
+</style>
+<div class="wrapper">
+  <div class="quizContainer"> 
+    
+  </div>
+  <button>Submit</button>
 </div>
 `
 
@@ -94,12 +95,13 @@ class QuizQuestion extends window.HTMLElement {
     this._answerURL = undefined
     this._currentQuestion = undefined
     this._answerForm = this.shadowRoot.querySelector('.quizForm')
-    this._button = this.shadowRoot.querySelector('.quizAnswer button')
+    this._quizContainer = this.shadowRoot.querySelector('.quizContainer')
+    this._button = this.shadowRoot.querySelector('.wrapper button')
     this._textBox = undefined
     this._answer = undefined
     this._isAltQuestion = false
     this._nameEnter = this._enterUserName.bind(this)
-    this._name = undefined
+    this._playerName = undefined
   }
 
   connectedCallback () {
@@ -111,11 +113,11 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   _enterUserName () {
-    const input = this.shadowRoot.querySelector('.quizForm input')
-    const playerName = this.shadowRoot.querySelector('.playerName')
-    playerName.textContent = input.value
-    this.startGame()
+    const input = this.shadowRoot.querySelector('.quizContainer input')
+    this._playerName = input.value
     this._button.removeEventListener('click', this._nameEnter, true)
+    this.createGameTemplate()
+    this.startGame()
   }
 
   async startGame () {
@@ -215,8 +217,31 @@ class QuizQuestion extends window.HTMLElement {
     q.textContent = question
   }
 
+  createGameTemplate () {
+    this.cleanForm(this._quizContainer)
+    const gameTemplate = document.createElement('template')
+
+    gameTemplate.innerHTML = `
+    <div class="quizHeader">
+      <p>Question: <span id="questionNumber"></span></p>
+      </div>
+      <div class="quizInfo">
+          <span class="timer">TIMER</span>
+          <span class="playerName">PLAYER: </span>
+      </div>
+      <div class="quizMain">
+          <p class="question"></p>
+      </div>
+      <div class="quizAnswer">
+          <div class="quizForm">
+          </div>
+      </div>
+`
+    this._quizContainer.appendChild(gameTemplate.content.cloneNode(true))
+  }
+
   createStartScreen () {
-    const enterName = this.shadowRoot.querySelector('.question')
+    /*  const enterName = this.shadowRoot.querySelector('.question')
 
     enterName.textContent = 'ENTER NAME'
 
@@ -225,6 +250,19 @@ class QuizQuestion extends window.HTMLElement {
     nameField.placeholder = 'Name'
 
     this._answerForm.appendChild(nameField)
+    nameField.focus() */
+
+    const startScreen = document.createElement('template')
+
+    startScreen.innerHTML = `
+    <div class="quizHeader">
+      <p class="question">ENTER NAME</p>
+    </div>
+    <div class="quizMain">
+      <input type="text" placeholder="name"  class="enterName">
+    </div>
+    `
+    this._quizContainer.appendChild(startScreen.content.cloneNode(true))
   }
 
   /**
@@ -234,7 +272,7 @@ class QuizQuestion extends window.HTMLElement {
    */
   createTextForm () {
     if (this._answerForm.childElementCount > 0) {
-      this.cleanForm()
+      this.cleanForm(this._answerForm)
     }
     const textBox = document.createElement('input')
     textBox.type = 'text'
@@ -253,7 +291,7 @@ class QuizQuestion extends window.HTMLElement {
     console.log(Object.keys(alt))
     if (this._answerForm.childElementCount > 0) {
       console.log('clean')
-      this.cleanForm()
+      this.cleanForm(this._answerForm)
     }
 
     for (let i = 0; i < Object.keys(alt).length; i++) {
@@ -277,9 +315,9 @@ class QuizQuestion extends window.HTMLElement {
    *
    * @memberof QuizQuestion
    */
-  cleanForm () {
-    while (this._answerForm.hasChildNodes()) {
-      this._answerForm.removeChild(this._answerForm.firstChild)
+  cleanForm (element) {
+    while (element.hasChildNodes()) {
+      element.removeChild(element.firstChild)
     }
   }
 }

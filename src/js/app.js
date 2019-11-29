@@ -1,6 +1,6 @@
 import './quiz-question.js'
 
-let url = 'hej'
+/* let url = 'hej'
 
 async function theRunner () {
   await theGetter()
@@ -30,4 +30,4 @@ async function thePoster () {
   console.log(await res.json())
 }
 
-theRunner()
+theRunner() */

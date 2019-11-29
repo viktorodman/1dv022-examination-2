@@ -1,11 +1,14 @@
 
-import { template, gameTemplate, startScreen, textTemplate, altTemplate } from './quizTemplate.js'
+import { template, gameTemplate, startScreen, textTemplate, altTemplate } from './quizTemplates.js'
+import { templateCss, startScreenCss } from './quizCss.js'
 
 class QuizQuestion extends window.HTMLElement {
   constructor () {
     super()
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.appendChild(template.content.cloneNode(true))
+    this.shadowRoot.appendChild(templateCss.content.cloneNode(true))
+    this.templateCss = this.shadowRoot.querySelector('style')
 
     this._questionURL = 'http://vhost3.lnu.se:20080/question/1'
     this._firstQuestion = 'http://vhost3.lnu.se:20080/question/1'
@@ -21,7 +24,8 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   connectedCallback () {
-    this.createStartScreen()
+    this._quizContainer.appendChild(startScreen.content.cloneNode(true))
+    this.templateCss.appendChild(startScreenCss.content.cloneNode(true))
 
     this._button.addEventListener('click', this._nameEnter, true)
 
@@ -31,9 +35,10 @@ class QuizQuestion extends window.HTMLElement {
   _enterUserName () {
     const input = this.shadowRoot.querySelector('.quizContainer input')
     this._playerName = input.value
-    this._button.removeEventListener('click', this._nameEnter, true)
-    this.createGameTemplate()
+    this.cleanForm(this._quizContainer)
+    this._quizContainer.appendChild(gameTemplate.content.cloneNode(true))
     this._answerForm = this.shadowRoot.querySelector('.quizForm')
+    this._button.removeEventListener('click', this._nameEnter, true)
     this.startGame()
   }
 
@@ -139,15 +144,6 @@ class QuizQuestion extends window.HTMLElement {
   setQuestion (question) {
     const q = this.shadowRoot.querySelector('.question')
     q.textContent = question
-  }
-
-  createGameTemplate () {
-    this.cleanForm(this._quizContainer)
-    this._quizContainer.appendChild(gameTemplate.content.cloneNode(true))
-  }
-
-  createStartScreen () {
-    this._quizContainer.appendChild(startScreen.content.cloneNode(true))
   }
 
   /**

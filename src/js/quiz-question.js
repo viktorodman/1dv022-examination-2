@@ -1,67 +1,53 @@
 
 import { template, gameTemplate, startScreen, textTemplate, altTemplate } from './quizTemplates.js'
-import { templateCss, startScreenCss } from './quizCss.js'
+import { templateCss, startScreenCss, gameTemplateCss } from './quizCss.js'
 
 class QuizQuestion extends window.HTMLElement {
   constructor () {
     super()
     this.attachShadow({ mode: 'open' })
-    this.shadowRoot.appendChild(template.content.cloneNode(true))
     this.shadowRoot.appendChild(templateCss.content.cloneNode(true))
-    this.templateCss = this.shadowRoot.querySelector('style')
+    this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-    this._questionURL = 'http://vhost3.lnu.se:20080/question/1'
+    this._style = this.shadowRoot.querySelector('.wrapper')
     this._firstQuestion = 'http://vhost3.lnu.se:20080/question/1'
+    this._questionURL = this._firstQuestion
+
     this._currentQuestion = undefined
     this._answerForm = undefined
     this._quizContainer = this.shadowRoot.querySelector('.quizContainer')
-    this._button = this.shadowRoot.querySelector('.wrapper button')
-    this._textBox = undefined
-    this._isAltQuestion = false
-    this._nameEnter = this._enterUserName.bind(this)
     this._playerName = undefined
     this._win = false
+    this._answerInput = undefined
   }
 
   connectedCallback () {
     this._quizContainer.appendChild(startScreen.content.cloneNode(true))
-    this.templateCss.appendChild(startScreenCss.content.cloneNode(true))
-
-    this._button.addEventListener('click', this._nameEnter, true)
-
+    this.shadowRoot.insertBefore(startScreenCss.content.cloneNode(true), this._style)
+    this._enterUserName()
     /* this.startGame() */
   }
 
   _enterUserName () {
-    const input = this.shadowRoot.querySelector('.quizContainer input')
-    this._playerName = input.value
-    this.cleanForm(this._quizContainer)
-    this._quizContainer.appendChild(gameTemplate.content.cloneNode(true))
-    this._answerForm = this.shadowRoot.querySelector('.quizForm')
-    this._button.removeEventListener('click', this._nameEnter, true)
-    this.startGame()
+    this.shadowRoot.querySelector('.playButton').addEventListener('click', event => {
+      const nameInput = this.shadowRoot.querySelector('.playerName')
+      this._playerName = nameInput.value
+      this.cleanForm(this._quizContainer)
+      this.shadowRoot.querySelector('.startScreen').remove()
+      this._quizContainer.appendChild(gameTemplate.content.cloneNode(true))
+      this.shadowRoot.insertBefore(gameTemplateCss.content.cloneNode(true), this._style)
+      this._answerForm = this.shadowRoot.querySelector('.quizForm')
+      this.startGame()
+    })
   }
 
   async startGame () {
-    const question = await this.getQuestion()
-    this.setQuestion(question)
-    this._button.addEventListener('click', async event => {
-      // Get the answer
+    this._currentQuestion = await this.getQuestion()
+
+    this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
       const answer = this.getAnswer()
-      // Send Answer
       const result = await this.sendAnswer(answer)
-      console.log(result)
-      // Check if the answer is correct
-      if (this.checkAnswer(result)) {
-        if (this._win) {
-          this.createWinTemplate()
-        } else {
-          const newQuestion = await this.getQuestion()
-          this.setQuestion(newQuestion)
-        }
-      } else {
-        this.createLoseTemplate()
-      }
+      this.checkAnswer(result)
     })
   }
 
@@ -69,35 +55,28 @@ class QuizQuestion extends window.HTMLElement {
     const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
     this._currentQuestion = res
+    this.shadowRoot.querySelector('.question').textContent = res.question
 
     if (res.alternatives) {
       this.createAltForm()
-      this._isAltQuestion = true
+      this._answerInput = this.shadowRoot.querySelectorAll('input')
     } else {
       this.createTextForm()
-      this._textBox = this.shadowRoot.querySelector('quizForm input')
-      this._isAltQuestion = false
+      this._answerInput = this.shadowRoot.querySelector('input')
     }
-    console.log(res)
-    return res.question
+    return res
   }
 
   getAnswer () {
     let answer
-
-    if (this._isAltQuestion) {
-      const radioButtons = this._answerForm.querySelectorAll('input')
-
-      radioButtons.forEach(button => {
-        if (button.checked) {
-          answer = button.value
+    if (this._currentQuestion.alternatives) {
+      this._answerInput.forEach(alt => {
+        if (alt.checked) {
+          answer = alt.value
         }
       })
-      console.log(answer)
     } else {
-      const textForm = this._answerForm.querySelector('input')
-
-      answer = textForm.value
+      answer = this._answerInput.value
     }
 
     return answer
@@ -120,30 +99,17 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   checkAnswer (answer) {
-    let result = false
     if (answer.message === 'Correct answer!') {
       if (answer.nextURL) {
         this._questionURL = answer.nextURL
-        result = true
+        this.getQuestion()
       } else {
-        this._win = true
+        console.log('you win')
       }
       console.log('correct')
     } else {
-      this._questionURL = this._firstQuestion
+      console.log('you lose')
     }
-    return result
-  }
-
-  /**
-   *
-   *
-   * @param {string} question A new question
-   * @memberof QuizQuestion
-   */
-  setQuestion (question) {
-    const q = this.shadowRoot.querySelector('.question')
-    q.textContent = question
   }
 
   /**
@@ -156,7 +122,7 @@ class QuizQuestion extends window.HTMLElement {
     if (this._answerForm.childElementCount > 0) {
       this.cleanForm(this._answerForm)
     }
-    this._quizContainer.appendChild(textTemplate.content.cloneNode(true))
+    this._answerForm.appendChild(textTemplate.content.cloneNode(true))
   }
 
   /**
@@ -176,35 +142,14 @@ class QuizQuestion extends window.HTMLElement {
       altTemp = document.importNode(altTemplate.content, true)
       const label = altTemp.querySelector('label')
       const radioButton = altTemp.querySelector('input')
+      const textNode = document.createTextNode(Object.values(alt)[i])
       label.htmlFor = `r${i + 1}`
-      label.textContent = Object.values(alt)[i]
       radioButton.id = `r${i + 1}`
       radioButton.value = Object.keys(alt)[i]
+      label.appendChild(radioButton)
+      label.appendChild(textNode)
       this._answerForm.appendChild(label)
-      this._answerForm.appendChild(radioButton)
     }
-  }
-
-  createWinTemplate () {
-    this.cleanForm(this._quizContainer)
-
-    const winTemplate = document.createElement('template')
-
-    winTemplate.innerHTML = /* HTML */ `
-      <h1>YOU WON ! GZ</h1>
-    `
-    this._quizContainer.appendChild(winTemplate.content.cloneNode(true))
-  }
-
-  createLoseTemplate () {
-    this.cleanForm(this._quizContainer)
-
-    const loseTemplate = document.createElement('template')
-
-    loseTemplate.innerHTML = /* HTML */ `
-      <h1>YOU LOSE ! :(</h1>
-    `
-    this._quizContainer.appendChild(loseTemplate.content.cloneNode(true))
   }
 
   /**

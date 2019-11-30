@@ -5,7 +5,6 @@ template.innerHTML = `
   <div class="quizContainer"> 
     
   </div>
-  <button>Submit</button>
 </div>
 `
 
@@ -19,7 +18,10 @@ startScreen.innerHTML = `
       <p class="description">Enter your name and press Play to start the quiz</p>
     </div>
     <div>
-      <input class="quizName" type="text" placeholder="Name"  class="enterName">
+      <input class="playerName" type="text" placeholder="Name"  class="enterName">
+    </div>
+    <div>
+    <button class="playButton">Play</button>
     </div>
     `
 
@@ -31,21 +33,21 @@ gameTemplate.innerHTML = `
       </div>
       <div class="quizInfo">
           <span class="timer">TIMER</span>
-          <span class="playerName">PLAYER: </span>
       </div>
       <div class="quizMain">
           <p class="question"></p>
       </div>
-      <div class="quizAnswer">
-          <div class="quizForm">
-          </div>
+      <div class="quizForm">
+      </div>
+      <div>
+        <button class="answerButton">Answer</button>
       </div>
 `
 
 const textTemplate = document.createElement('template')
 
 textTemplate.innerHTML = /* HTML */ `
-      <input type="text">
+      <input type="text" placeholder="Your Answer">
     `
 
 const altTemplate = document.createElement('template')

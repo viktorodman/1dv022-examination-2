@@ -1,6 +1,6 @@
 
-import { template, gameTemplate, startScreen, textTemplate, altTemplate, winTemplate, loseTemplate } from './quizTemplates.js'
-import { templateCss, startScreenCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from './quizCss.js'
+import { template, gameTemplate, startScreen, textTemplate, altTemplate, winTemplate, loseTemplate, highscoreTemplate } from './quizTemplates.js'
+import { templateCss, startScreenCss, gameTemplateCss, winTemplateCss, loseTemplateCss, highscoreCss } from './quizCss.js'
 
 class QuizQuestion extends window.HTMLElement {
   constructor () {
@@ -18,12 +18,16 @@ class QuizQuestion extends window.HTMLElement {
     this._quizContainer = this.shadowRoot.querySelector('.quizContainer')
     this._playerName = undefined
     this._answerInput = undefined
+
+    this._intervalID = null
+    this._maxTime = 20
+    this._totalTime = 0
+    this._currentTime = this._maxTime
+    this._timer = undefined
   }
 
   connectedCallback () {
     this.changeTemplates(startScreen, startScreenCss)
-    this._enterUserName()
-
     this.shadowRoot.querySelector('.playButton').addEventListener('click', event => {
       const nameInput = this.shadowRoot.querySelector('.playerName')
       this._playerName = nameInput.value
@@ -37,6 +41,7 @@ class QuizQuestion extends window.HTMLElement {
   async startGame () {
     this._currentQuestion = await this.getQuestion()
     this.createForm()
+    this.startTimer()
     this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
       const answer = this.getAnswer()
       const result = await this.sendAnswer(answer)
@@ -47,9 +52,7 @@ class QuizQuestion extends window.HTMLElement {
   async getQuestion () {
     const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
-    /* this._currentQuestion = res */
     this.shadowRoot.querySelector('.question').textContent = res.question
-
     return res
   }
 
@@ -90,11 +93,15 @@ class QuizQuestion extends window.HTMLElement {
         this._questionURL = answer.nextURL
         this._currentQuestion = await this.getQuestion()
         this.createForm()
+        this.restartTimer()
       } else {
         this.createGameOverTemplate(winTemplate, winTemplateCss)
+        this.stopTimer()
+        this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
       }
       console.log('correct')
     } else {
+      this.stopTimer()
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
     }
   }
@@ -152,17 +159,24 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  createHighscoreTemplate () {
+    this.cleanForm(this._quizContainer)
+    this.changeTemplates(highscoreTemplate, highscoreCss, '.gameOverTemp')
+
+    this.playAgain()
+  }
+
   createGameOverTemplate (newTemp, newCss) {
     this.cleanForm(this._quizContainer)
     this.changeTemplates(newTemp, newCss, '.gameScreen')
 
-    this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
-      this.cleanForm(this._quizContainer)
-      this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
-      this._questionURL = this._firstQuestion
-      this._answerForm = this.shadowRoot.querySelector('.quizForm')
-      this.startGame()
-    })
+    this.playAgain()
+
+    if (newTemp === winTemplate) {
+      this.shadowRoot.querySelector('.highscore').addEventListener('click', event => {
+        this.createHighscoreTemplate()
+      })
+    }
   }
 
   changeTemplates (newHtmlTemplate, newCssTemplate, oldCss) {
@@ -183,6 +197,48 @@ class QuizQuestion extends window.HTMLElement {
     while (element.hasChildNodes()) {
       element.removeChild(element.firstChild)
     }
+  }
+
+  startTimer () {
+    this._timer = this.shadowRoot.querySelector('.timer')
+    this._timer.textContent = this._maxTime
+    this._intervalID = setInterval(() => {
+      this.changeTimer(this._maxTime)
+      if (this._currentTime === 0) {
+        this.stopTimer()
+      }
+    }, 1000)
+  }
+
+  stopTimer () {
+    clearInterval(this._intervalID)
+    this._timer.textContent = this._maxTime
+    this._currentTime = this._maxTime
+  }
+
+  changeTimer () {
+    this._currentTime -= 1
+    this._timer.textContent = this._currentTime
+    console.log('hej')
+  }
+
+  restartTimer () {
+    this._totalTime += this._maxTime - this._currentTime
+    this._currentTime = this._maxTime
+    clearInterval(this._intervalID)
+    this.startTimer()
+  }
+
+  playAgain () {
+    this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
+      this.cleanForm(this._quizContainer)
+      this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
+      this._questionURL = this._firstQuestion
+      this._answerForm = this.shadowRoot.querySelector('.quizForm')
+      this._totalTime = 0
+      this.startGame()
+      console.log('hej')
+    })
   }
 }
 

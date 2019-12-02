@@ -32,7 +32,7 @@ gameTemplate.innerHTML = `
       <p>Question: <span id="questionNumber"></span></p>
       </div>
       <div class="quizInfo">
-          <span class="timer">TIMER</span>
+          <span class="timer"></span>
       </div>
       <div class="quizMain">
           <p class="question"></p>
@@ -82,7 +82,48 @@ const loseTemplate = document.createElement('template')
 loseTemplate.innerHTML = `
   <div class="loseContainer">
     <div class="loseTitle">
-      <h3>YOU WIN!</h3>
+      <h3>YOU LOSE :( Try Again</h3>
+    </div>
+    <div class="loseButtons">
+      <button class="playAgain">Play Again</button>
+    </div>
+  </div>
+`
+
+const highscoreTemplate = document.createElement('template')
+
+highscoreTemplate.innerHTML = `
+  <div class="highscoreContainer">
+    <div class="highscoreTitle">
+      <h3>HIGH-SCORE</h3>
+    </div>
+    <div class="highscoreTable">
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Time</th>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      </table>
     </div>
     <div class="loseButtons">
       <button class="playAgain">Play Again</button>
@@ -97,5 +138,6 @@ export {
   startScreen,
   altTemplate,
   winTemplate,
-  loseTemplate
+  loseTemplate,
+  highscoreTemplate
 }

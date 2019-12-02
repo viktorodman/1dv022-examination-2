@@ -141,8 +141,21 @@ winTemplateCss.innerHTML = `
 const loseTemplateCss = document.createElement('template')
 loseTemplateCss.innerHTML = `
     <style class="gameOverTemp">
-        .winTitle {
+        .loseTitle {
             font-size: 50px;
+        }
+    </style>
+`
+
+const highscoreCss = document.createElement('template')
+highscoreCss.innerHTML = `
+    <style class="gameOverTemp">
+        .highscoreTitle {
+            font-size: 30px;
+        }
+        table {
+            margin: auto;
+            font-size: 30px;
         }
     </style>
 `
@@ -151,5 +164,6 @@ export {
   startScreenCss,
   gameTemplateCss,
   winTemplateCss,
-  loseTemplateCss
+  loseTemplateCss,
+  highscoreCss
 }

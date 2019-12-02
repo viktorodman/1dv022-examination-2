@@ -39,7 +39,7 @@ gameTemplate.innerHTML = `
       </div>
       <div class="quizForm">
       </div>
-      <div>
+      <div class ="buttonDiv">
         <button class="answerButton">Answer</button>
       </div>
 `
@@ -53,13 +53,49 @@ textTemplate.innerHTML = /* HTML */ `
 const altTemplate = document.createElement('template')
 
 altTemplate.innerHTML = /* HTML */ `
+      <div class="alternativDiv"></div>
       <label></label>
       <input type="radio" name="Alternatives">
     `
+
+const winTemplate = document.createElement('template')
+
+winTemplate.innerHTML = `
+
+  <div class="winContainer">
+    <div class="winTitle">
+      <h3>YOU WIN!</h3>
+    </div>
+    <div class="winTime">
+      <p>Total time: <span class="timeTotal"></span></p>
+    </div>
+    <div class="winButtons">
+      <button class="playAgain">Play Again</button>
+      <button class="highscore">Show High-Score</button>
+    </div>
+  </div>
+  
+`
+
+const loseTemplate = document.createElement('template')
+
+loseTemplate.innerHTML = `
+  <div class="loseContainer">
+    <div class="loseTitle">
+      <h3>YOU WIN!</h3>
+    </div>
+    <div class="loseButtons">
+      <button class="playAgain">Play Again</button>
+    </div>
+  </div>
+`
+
 export {
   template,
   gameTemplate,
   textTemplate,
   startScreen,
-  altTemplate
+  altTemplate,
+  winTemplate,
+  loseTemplate
 }

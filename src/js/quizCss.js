@@ -89,12 +89,13 @@ gameTemplateCss.innerHTML = `
 .quizForm {
     height: 40%;
     text-align: center;
-    display: grid;
+    display: block;
 }
 .question {
     margin: 0;
     padding-top: 60px;
     font-size: 40px;
+    color: #f2b83a;
 }
 .playerName {
     float: right;
@@ -111,7 +112,7 @@ input[type="radio"] {
     font-size:25px;
     margin-top: -1px;
   vertical-align: middle;
-} */
+} 
 input[type="radio"]{
     vertical-align: baseline;
 }
@@ -119,13 +120,36 @@ input[type="radio"]{
 .timer {
   float: left;
 }
+.alternativDiv {
 
+}
 </style>
 
 `
+const winTemplateCss = document.createElement('template')
+winTemplateCss.innerHTML = `
+    <style class="gameOverTemp">
+        .winTitle {
+            font-size: 30px;
+        }
+        .winTime {
+            font-size: 20px;
+        }
+    </style>
+`
 
+const loseTemplateCss = document.createElement('template')
+loseTemplateCss.innerHTML = `
+    <style class="gameOverTemp">
+        .winTitle {
+            font-size: 50px;
+        }
+    </style>
+`
 export {
   templateCss,
   startScreenCss,
-  gameTemplateCss
+  gameTemplateCss,
+  winTemplateCss,
+  loseTemplateCss
 }

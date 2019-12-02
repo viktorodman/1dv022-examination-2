@@ -204,9 +204,6 @@ class QuizQuestion extends window.HTMLElement {
     this._timer.textContent = this._maxTime
     this._intervalID = setInterval(() => {
       this.changeTimer(this._maxTime)
-      if (this._currentTime === 0) {
-        this.stopTimer()
-      }
     }, 1000)
   }
 
@@ -220,6 +217,10 @@ class QuizQuestion extends window.HTMLElement {
     this._currentTime -= 1
     this._timer.textContent = this._currentTime
     console.log('hej')
+    if (this._currentTime === 0) {
+      this.stopTimer()
+      this.createGameOverTemplate(loseTemplate, loseTemplateCss)
+    }
   }
 
   restartTimer () {

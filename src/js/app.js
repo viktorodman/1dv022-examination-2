@@ -1,4 +1,5 @@
 import './quiz-question.js'
+import './high-score.js'
 
 /* let url = 'hej'
 

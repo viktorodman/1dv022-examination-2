@@ -9,7 +9,7 @@ templateCss.innerHTML = `
         outline:none;
     }
     .wrapper {
-    width: 900px;
+    width: 100%;
     min-height: 300px;
     background-color: #333;
     margin: 0 auto;

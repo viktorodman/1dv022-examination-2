@@ -161,7 +161,7 @@ class QuizQuestion extends window.HTMLElement {
 
   createHighscoreTemplate () {
     this.cleanForm(this._quizContainer)
-    this.changeTemplates(highscoreTemplate, highscoreCss, '.gameOverTemp')
+    this._quizContainer.appendChild(document.createElement('high-score'))
 
     this.playAgain()
   }
@@ -203,7 +203,7 @@ class QuizQuestion extends window.HTMLElement {
     this._timer = this.shadowRoot.querySelector('.timer')
     this._timer.textContent = this._maxTime
     this._intervalID = setInterval(() => {
-      this.changeTimer(this._maxTime)
+      this.changeTimer()
     }, 1000)
   }
 

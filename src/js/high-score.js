@@ -92,16 +92,12 @@ class HighScore extends window.HTMLElement {
     const lastPlace = this.currentList[this.currentList.length - 1]
     if (this.currentList.length >= 5 && this.time < lastPlace.time) {
       if (this.checkName()) {
-        console.log('checknameses')
         this._storage.setItem(this.playerName, String(this.time))
       } else {
-        console.log('removing item')
-        console.log(lastPlace.name)
         this._storage.removeItem(lastPlace.name)
         this._storage.setItem(this.playerName, String(this.time))
       }
     } else if (this.currentList.length < 5) {
-      console.log('adding item')
       this._storage.setItem(this.playerName, String(this.time))
     }
     this.getCurrentList()

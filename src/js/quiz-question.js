@@ -161,7 +161,16 @@ class QuizQuestion extends window.HTMLElement {
 
   createHighscoreTemplate () {
     this.cleanForm(this._quizContainer)
-    this._quizContainer.appendChild(document.createElement('high-score'))
+    const highscore = document.createElement('high-score')
+    const button = document.createElement('button')
+
+    button.classList.add('playAgain')
+    button.textContent = 'Play again'
+    highscore.setAttribute('player', this._playerName)
+    highscore.setAttribute('time', this._totalTime)
+
+    this._quizContainer.appendChild(highscore)
+    this._quizContainer.appendChild(button)
 
     this.playAgain()
   }

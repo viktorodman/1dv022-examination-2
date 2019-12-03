@@ -88,7 +88,6 @@ gameTemplateCss.innerHTML = `
 }
 .quizForm {
     height: 40%;
-    text-align: center;
     display: block;
 }
 .question {
@@ -112,6 +111,7 @@ input[type="radio"] {
     font-size:25px;
     margin-top: -1px;
   vertical-align: middle;
+  text-align: initial;
 } 
 input[type="radio"]{
     vertical-align: baseline;

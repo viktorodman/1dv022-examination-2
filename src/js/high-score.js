@@ -105,7 +105,9 @@ class HighScore extends window.HTMLElement {
   */
   connectedCallback () {
     this.getCurrentList()
+    console.log('2score')
     if (this.playerName && this.time) {
+      console.log('highscore')
       this.addToList()
     }
     this.updateRendering()

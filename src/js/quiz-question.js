@@ -144,11 +144,11 @@ class QuizQuestion extends window.HTMLElement {
         this.createForm()
         this._timer.resetTimer()
       } else {
-        this.createGameOverTemplate(winTemplate, winTemplateCss)
         /* this.restartTimer() */
 
         this._timer.stopTimer()
         this._totalTime = this._timer.getTotalTime()
+        this.createGameOverTemplate(winTemplate, winTemplateCss)
         this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
       }
       console.log('correct')
@@ -230,8 +230,9 @@ class QuizQuestion extends window.HTMLElement {
     this.playAgain()
 
     if (newTemp === winTemplate) {
-      console.log(typeof this._totalTime)
       const highscore = document.createElement('high-score')
+      console.log(this._playerName)
+      console.log(this._totalTime)
       highscore.setAttribute('player', this._playerName)
       highscore.setAttribute('time', this._totalTime)
 
@@ -279,6 +280,7 @@ class QuizQuestion extends window.HTMLElement {
       this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
       this._questionURL = this._firstQuestion
       this._answerForm = this.shadowRoot.querySelector('.quizForm')
+      console.log('inseide')
       this._totalTime = 0
 
       this.startGame()

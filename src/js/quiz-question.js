@@ -1,8 +1,18 @@
 
-import { template, gameTemplate, startScreen, textTemplate, altTemplate, winTemplate, loseTemplate, highscoreTemplate } from './quizTemplates.js'
-import { templateCss, startScreenCss, gameTemplateCss, winTemplateCss, loseTemplateCss, highscoreCss } from './quizCss.js'
-
+import { template, gameTemplate, startScreen, textTemplate, altTemplate, winTemplate, loseTemplate } from './quizTemplates.js'
+import { templateCss, startScreenCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from './quizCss.js'
+/**
+ * Represents a QuizApp
+ *
+ * @class QuizQuestion
+ * @extends {window.HTMLElement}
+ */
 class QuizQuestion extends window.HTMLElement {
+  /**
+   * Creates an instance of QuizQuestion.
+   *
+   * @memberof QuizQuestion
+   */
   constructor () {
     super()
     this.attachShadow({ mode: 'open' })
@@ -26,6 +36,11 @@ class QuizQuestion extends window.HTMLElement {
     this._timer = undefined
   }
 
+  /**
+   * Runs when the element is appended to a document-connected element
+   *
+   * @memberof QuizQuestion
+   */
   connectedCallback () {
     this.changeTemplates(startScreen, startScreenCss)
     this.shadowRoot.querySelector('.playButton').addEventListener('click', event => {
@@ -38,6 +53,11 @@ class QuizQuestion extends window.HTMLElement {
     })
   }
 
+  /**
+   * Starts a new game
+   *
+   * @memberof QuizQuestion
+   */
   async startGame () {
     this._currentQuestion = await this.getQuestion()
     this.createForm()
@@ -49,6 +69,12 @@ class QuizQuestion extends window.HTMLElement {
     })
   }
 
+  /**
+   * Gets a new objectfrom the server
+   *
+   * @returns {Object} a new object
+   * @memberof QuizQuestion
+   */
   async getQuestion () {
     const pro = await window.fetch(this._questionURL)
     const res = await pro.json()
@@ -56,6 +82,12 @@ class QuizQuestion extends window.HTMLElement {
     return res
   }
 
+  /**
+   * Returns the answer that the user entered
+   *
+   * @returns {string} An answer
+   * @memberof QuizQuestion
+   */
   getAnswer () {
     let answer
     if (this._currentQuestion.alternatives) {
@@ -71,6 +103,13 @@ class QuizQuestion extends window.HTMLElement {
     return answer
   }
 
+  /**
+   * Sends a answer to the server
+   *
+   * @param {String} myAnswer An answer
+   * @returns {Object} returns an Object from the server
+   * @memberof QuizQuestion
+   */
   async sendAnswer (myAnswer) {
     const data = {
       answer: myAnswer
@@ -87,6 +126,12 @@ class QuizQuestion extends window.HTMLElement {
     return res.json()
   }
 
+  /**
+   * Controlls the returned Object that was recived from the server
+   * and decides how the game should continue
+   * @param {Object} answer An Object that was sent from the server
+   * @memberof QuizQuestion
+   */
   async checkAnswer (answer) {
     if (answer.message === 'Correct answer!') {
       if (answer.nextURL) {
@@ -106,6 +151,11 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  /**
+ * Calls a new function depending on the question type.
+ *
+ * @memberof QuizQuestion
+ */
   createForm () {
     if (this._currentQuestion.alternatives) {
       this.createAltForm()
@@ -159,6 +209,11 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  /**
+   * Adds a high-score list to the quizContainer div
+   *
+   * @memberof QuizQuestion
+   */
   createHighscoreTemplate () {
     this.cleanForm(this._quizContainer)
     const highscore = document.createElement('high-score')
@@ -175,6 +230,13 @@ class QuizQuestion extends window.HTMLElement {
     this.playAgain()
   }
 
+  /**
+   * Adds a game over template in the quizContainer div
+   *
+   * @param {template} newTemp A HTML template
+   * @param {template} newCss A HTML template
+   * @memberof QuizQuestion
+   */
   createGameOverTemplate (newTemp, newCss) {
     this.cleanForm(this._quizContainer)
     this.changeTemplates(newTemp, newCss, '.gameScreen')
@@ -188,6 +250,15 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  /**
+   * Adds templates to the quizContainer div
+   * Also removes the old css if the style tags class name is passed
+   *
+   * @param {template} newHtmlTemplate A HTML template
+   * @param {template} newCssTemplate A HTML template
+   * @param {html class} oldCss A HTML class
+   * @memberof QuizQuestion
+   */
   changeTemplates (newHtmlTemplate, newCssTemplate, oldCss) {
     if (oldCss) {
       this.shadowRoot.querySelector(oldCss).remove()
@@ -208,6 +279,11 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  /**
+   * Starts a timer counting from 20 to 0
+   *
+   * @memberof QuizQuestion
+   */
   startTimer () {
     this._timer = this.shadowRoot.querySelector('.timer')
     this._timer.textContent = this._maxTime
@@ -216,12 +292,22 @@ class QuizQuestion extends window.HTMLElement {
     }, 1000)
   }
 
+  /**
+   * Stops the timer
+   *
+   * @memberof QuizQuestion
+   */
   stopTimer () {
     clearInterval(this._intervalID)
     this._timer.textContent = this._maxTime
     this._currentTime = this._maxTime
   }
 
+  /**
+   * Updates the displays timer
+   *
+   * @memberof QuizQuestion
+   */
   changeTimer () {
     this._currentTime -= 1
     this._timer.textContent = this._currentTime
@@ -232,6 +318,11 @@ class QuizQuestion extends window.HTMLElement {
     }
   }
 
+  /**
+   * resets the clock and start it again
+   *
+   * @memberof QuizQuestion
+   */
   restartTimer () {
     this._totalTime += this._maxTime - this._currentTime
     this._currentTime = this._maxTime
@@ -239,6 +330,11 @@ class QuizQuestion extends window.HTMLElement {
     this.startTimer()
   }
 
+  /**
+   * adds an event listener to a button with the class name "playAgain"
+   *
+   * @memberof QuizQuestion
+   */
   playAgain () {
     this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
       this.cleanForm(this._quizContainer)

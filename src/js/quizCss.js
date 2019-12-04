@@ -147,23 +147,10 @@ loseTemplateCss.innerHTML = `
     </style>
 `
 
-const highscoreCss = document.createElement('template')
-highscoreCss.innerHTML = `
-    <style class="gameOverTemp">
-        .highscoreTitle {
-            font-size: 30px;
-        }
-        table {
-            margin: auto;
-            font-size: 30px;
-        }
-    </style>
-`
 export {
   templateCss,
   startScreenCss,
   gameTemplateCss,
   winTemplateCss,
-  loseTemplateCss,
-  highscoreCss
+  loseTemplateCss
 }

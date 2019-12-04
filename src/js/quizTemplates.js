@@ -90,47 +90,6 @@ loseTemplate.innerHTML = `
   </div>
 `
 
-const highscoreTemplate = document.createElement('template')
-
-highscoreTemplate.innerHTML = `
-  <div class="highscoreContainer">
-    <div class="highscoreTitle">
-      <h3>HIGH-SCORE</h3>
-    </div>
-    <div class="highscoreTable">
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Time</th>
-        </tr>
-        <tr>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-      </table>
-    </div>
-    <div class="loseButtons">
-      <button class="playAgain">Play Again</button>
-    </div>
-  </div>
-`
-
 export {
   template,
   gameTemplate,
@@ -138,6 +97,5 @@ export {
   startScreen,
   altTemplate,
   winTemplate,
-  loseTemplate,
-  highscoreTemplate
+  loseTemplate
 }

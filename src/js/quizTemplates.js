@@ -32,7 +32,8 @@ gameTemplate.innerHTML = `
       <p>Question: <span id="questionNumber"></span></p>
       </div>
       <div class="quizInfo">
-          <span class="timer"></span>
+          <!-- <span class="timer"></span> -->
+          <game-timer></game-timer>
       </div>
       <div class="quizMain">
           <p class="question"></p>

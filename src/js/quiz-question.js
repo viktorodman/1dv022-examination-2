@@ -42,19 +42,13 @@ class QuizQuestion extends window.HTMLElement {
    * @memberof QuizQuestion
    */
   connectedCallback () {
-    /* this.changeTemplates(startScreen, startScreenCss)
-    this.shadowRoot.querySelector('.playButton').addEventListener('click', event => {
-      const nameInput = this.shadowRoot.querySelector('.playerName')
-      this._playerName = nameInput.value
-      this.cleanForm(this._quizContainer)
-      this.changeTemplates(gameTemplate, gameTemplateCss, '.startScreen')
-      this._answerForm = this.shadowRoot.querySelector('.quizForm')
-      this.startGame()
-    }) */
     const name = this._quizContainer.querySelector('enter-name')
     name.addEventListener('nameEntered', event => {
       this._playerName = event.detail
       this.cleanForm(this._quizContainer)
+      this.changeTemplates(gameTemplate, gameTemplateCss)
+      this._answerForm = this.shadowRoot.querySelector('.quizForm')
+
       this.startGame()
     })
   }
@@ -65,9 +59,13 @@ class QuizQuestion extends window.HTMLElement {
    * @memberof QuizQuestion
    */
   async startGame () {
+    this._timer = this.shadowRoot.querySelector('game-timer')
+    this._timer.addEventListener('timezero', event => {
+      console.log('game over')
+      this.createGameOverTemplate(loseTemplate, loseTemplateCss)
+    })
     this._currentQuestion = await this.getQuestion()
     this.createForm()
-    this.startTimer()
     this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
       const answer = this.getAnswer()
       const result = await this.sendAnswer(answer)
@@ -144,16 +142,18 @@ class QuizQuestion extends window.HTMLElement {
         this._questionURL = answer.nextURL
         this._currentQuestion = await this.getQuestion()
         this.createForm()
-        this.restartTimer()
+        this._timer.resetTimer()
       } else {
         this.createGameOverTemplate(winTemplate, winTemplateCss)
-        this.restartTimer()
+        /* this.restartTimer() */
+
+        this._timer.stopTimer()
+        this._totalTime = this._timer.getTotalTime()
         this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
-        this.stopTimer()
       }
       console.log('correct')
     } else {
-      this.stopTimer()
+      this._timer.stopTimer()
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
     }
   }
@@ -230,6 +230,7 @@ class QuizQuestion extends window.HTMLElement {
     this.playAgain()
 
     if (newTemp === winTemplate) {
+      console.log(typeof this._totalTime)
       const highscore = document.createElement('high-score')
       highscore.setAttribute('player', this._playerName)
       highscore.setAttribute('time', this._totalTime)
@@ -268,57 +269,6 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   /**
-   * Starts a timer counting from 20 to 0
-   *
-   * @memberof QuizQuestion
-   */
-  startTimer () {
-    this._timer = this.shadowRoot.querySelector('.timer')
-    this._timer.textContent = this._maxTime
-    this._intervalID = setInterval(() => {
-      this.changeTimer()
-    }, 1000)
-  }
-
-  /**
-   * Stops the timer
-   *
-   * @memberof QuizQuestion
-   */
-  stopTimer () {
-    clearInterval(this._intervalID)
-    this._timer.textContent = this._maxTime
-    this._currentTime = this._maxTime
-  }
-
-  /**
-   * Updates the displays timer
-   *
-   * @memberof QuizQuestion
-   */
-  changeTimer () {
-    this._currentTime -= 1
-    this._timer.textContent = this._currentTime
-    console.log('hej')
-    if (this._currentTime === 0) {
-      this.stopTimer()
-      this.createGameOverTemplate(loseTemplate, loseTemplateCss)
-    }
-  }
-
-  /**
-   * resets the clock and start it again
-   *
-   * @memberof QuizQuestion
-   */
-  restartTimer () {
-    this._totalTime += this._maxTime - this._currentTime
-    this._currentTime = this._maxTime
-    clearInterval(this._intervalID)
-    this.startTimer()
-  }
-
-  /**
    * adds an event listener to a button with the class name "playAgain"
    *
    * @memberof QuizQuestion
@@ -330,6 +280,7 @@ class QuizQuestion extends window.HTMLElement {
       this._questionURL = this._firstQuestion
       this._answerForm = this.shadowRoot.querySelector('.quizForm')
       this._totalTime = 0
+
       this.startGame()
       console.log('pelle')
     })

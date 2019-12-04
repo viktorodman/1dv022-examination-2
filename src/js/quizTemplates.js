@@ -3,7 +3,7 @@ template.innerHTML = `
 
 <div class="wrapper">
   <div class="quizContainer"> 
-    
+    <enter-name></enter-name>
   </div>
 </div>
 `

@@ -1,6 +1,6 @@
 
-import { template, gameTemplate, startScreen, textTemplate, altTemplate, winTemplate, loseTemplate } from './quizTemplates.js'
-import { templateCss, startScreenCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from './quizCss.js'
+import { template, gameTemplate, textTemplate, altTemplate, winTemplate, loseTemplate } from './quizTemplates.js'
+import { templateCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from './quizCss.js'
 /**
  * Represents a QuizApp
  *
@@ -42,13 +42,19 @@ class QuizQuestion extends window.HTMLElement {
    * @memberof QuizQuestion
    */
   connectedCallback () {
-    this.changeTemplates(startScreen, startScreenCss)
+    /* this.changeTemplates(startScreen, startScreenCss)
     this.shadowRoot.querySelector('.playButton').addEventListener('click', event => {
       const nameInput = this.shadowRoot.querySelector('.playerName')
       this._playerName = nameInput.value
       this.cleanForm(this._quizContainer)
       this.changeTemplates(gameTemplate, gameTemplateCss, '.startScreen')
       this._answerForm = this.shadowRoot.querySelector('.quizForm')
+      this.startGame()
+    }) */
+    const name = this._quizContainer.querySelector('enter-name')
+    name.addEventListener('nameEntered', event => {
+      this._playerName = event.detail
+      this.cleanForm(this._quizContainer)
       this.startGame()
     })
   }

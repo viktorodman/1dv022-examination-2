@@ -1,6 +1,62 @@
 const template = document.createElement('template')
 template.innerHTML = `
-    <p>tjena</p>
+<style>
+    :host {
+        text-align: center
+    }
+  button {
+        font-size: 30px;
+        margin-bottom: 20px;
+        background-color: #f2b83a;
+        transition-duration: 0.4s;
+        padding-left: 30px;
+        padding-right: 30px;
+        margin-top: 20px;
+    }
+    button:hover {
+        background-color: #cfcfcf;
+    }
+    input[type="text"] {
+        font-size: 30px;
+        text-align: center;
+        margin-bottom: 20px;
+        border: none;
+        border-bottom: 2px solid #f2b83a;
+        background-color: #333;
+        color: #f2b83a;
+        width: 30%;
+        margin: 0 auto;
+    }
+    input[type="text"]::placeholder {
+        color: #f2b83a;
+        opacity: 1;
+    }
+    .quizTitle {
+        font-size: 60px;
+        margin: 0px;
+        padding-top: 15px;
+        color: #f2b83a;
+    }
+    .description {
+        font-size: 30px;
+    }
+</style>
+
+    <div>
+      <h2 class="quizTitle">QUIZ APP</h2>
+    </div>
+    <div>
+      <p class="description">Enter your name and press Play to start the quiz</p>
+    </div>
+    <div>
+      <input class="playerName" type="text" placeholder="Name">
+    </div>
+    <div>
+    <button class="nameButton">Play</button>
+    </div>
+    <div>
+        <p class="errorMessage"></p>
+    </div>
 `
 
 export default class EnterName extends window.HTMLElement {
@@ -8,6 +64,25 @@ export default class EnterName extends window.HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.shadowRoot.appendChild(template.content.cloneNode(true))
+
+    this.button = this.shadowRoot.querySelector('.nameButton')
+    this._input = this.shadowRoot.querySelector('.playerName')
+    this._error = this.shadowRoot.querySelector('.errorMessage')
+    this.name = undefined
+  }
+
+  connectedCallback () {
+    console.log(this.button)
+    this.button.addEventListener('click', () => this.addName())
+  }
+
+  addName () {
+    if (this._input.value.length > 0) {
+      this.name = this._input.value
+      this.dispatchEvent(new window.CustomEvent('nameEntered', { detail: this.name }))
+    } else {
+      this._error.textContent = 'Fyll i ett namn'
+    }
   }
 }
 

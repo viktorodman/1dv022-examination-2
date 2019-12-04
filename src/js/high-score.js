@@ -3,6 +3,13 @@ template.innerHTML = `
     <style>
         :host {
             color: #f2b83a;
+            text-align: center;
+        }
+        .show {
+          display: block;
+        }
+        .hidden {
+          display: none;
         }
         .highscoreTitle {
             font-size: 30px;
@@ -14,11 +21,18 @@ template.innerHTML = `
         }
         tr {
             border-bottom: 2px solid #f2b83a;
-
-            text-align: center;
+        }
+        button {
+          font-size: 30px;
+        margin-bottom: 20px;
+        background-color: #f2b83a;
+        transition-duration: 0.4s;
+        padding-left: 30px;
+        padding-right: 30px;
+        margin-top: 20px;
         }
     </style>
-    <div class="highscoreContainer">
+    <div class="hidden">
     <div class="highscoreTitle">
       <h3>HIGH-SCORE</h3>
     </div>
@@ -30,6 +44,9 @@ template.innerHTML = `
         </tr>
       </table>
     </div>
+  </div>
+  <div class="buttonDiv">
+      <button class="showHighScore">Show High Score</button>
   </div>
 `
 /**
@@ -92,6 +109,10 @@ class HighScore extends window.HTMLElement {
       this.addToList()
     }
     this.updateRendering()
+    this.shadowRoot.querySelector('.showHighScore').addEventListener('click', event => {
+      this.shadowRoot.querySelectorAll('div')[0].classList.replace('hidden', 'show')
+      this.shadowRoot.querySelector('.buttonDiv').remove()
+    })
   }
 
   /**

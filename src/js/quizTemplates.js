@@ -71,7 +71,6 @@ winTemplate.innerHTML = `
     </div>
     <div class="winButtons">
       <button class="playAgain">Play Again</button>
-      <button class="highscore">Show High-Score</button>
     </div>
   </div>
   

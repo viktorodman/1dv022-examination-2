@@ -141,8 +141,9 @@ class QuizQuestion extends window.HTMLElement {
         this.restartTimer()
       } else {
         this.createGameOverTemplate(winTemplate, winTemplateCss)
-        this.stopTimer()
+        this.restartTimer()
         this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
+        this.stopTimer()
       }
       console.log('correct')
     } else {
@@ -210,27 +211,6 @@ class QuizQuestion extends window.HTMLElement {
   }
 
   /**
-   * Adds a high-score list to the quizContainer div
-   *
-   * @memberof QuizQuestion
-   */
-  createHighscoreTemplate () {
-    this.cleanForm(this._quizContainer)
-    const highscore = document.createElement('high-score')
-    const button = document.createElement('button')
-
-    button.classList.add('playAgain')
-    button.textContent = 'Play again'
-    highscore.setAttribute('player', this._playerName)
-    highscore.setAttribute('time', this._totalTime)
-
-    this._quizContainer.appendChild(highscore)
-    this._quizContainer.appendChild(button)
-
-    this.playAgain()
-  }
-
-  /**
    * Adds a game over template in the quizContainer div
    *
    * @param {template} newTemp A HTML template
@@ -244,9 +224,11 @@ class QuizQuestion extends window.HTMLElement {
     this.playAgain()
 
     if (newTemp === winTemplate) {
-      this.shadowRoot.querySelector('.highscore').addEventListener('click', event => {
-        this.createHighscoreTemplate()
-      })
+      const highscore = document.createElement('high-score')
+      highscore.setAttribute('player', this._playerName)
+      highscore.setAttribute('time', this._totalTime)
+
+      this._quizContainer.appendChild(highscore)
     }
   }
 
@@ -343,7 +325,7 @@ class QuizQuestion extends window.HTMLElement {
       this._answerForm = this.shadowRoot.querySelector('.quizForm')
       this._totalTime = 0
       this.startGame()
-      console.log('hej')
+      console.log('pelle')
     })
   }
 }

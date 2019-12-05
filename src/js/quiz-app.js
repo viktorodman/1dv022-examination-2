@@ -4,14 +4,14 @@ import { templateCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from '.
 /**
  * Represents a QuizApp
  *
- * @class QuizQuestion
+ * @class QuizApp
  * @extends {window.HTMLElement}
  */
-class QuizQuestion extends window.HTMLElement {
+class QuizApp extends window.HTMLElement {
   /**
-   * Creates an instance of QuizQuestion.
+   * Creates an instance of QuizApp.
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   constructor () {
     super()
@@ -38,7 +38,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
    * Runs when the element is appended to a document-connected element
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   connectedCallback () {
     const name = this._quizContainer.querySelector('enter-name')
@@ -55,7 +55,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
    * Starts a new game
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   async startGame () {
     this._timer = this.shadowRoot.querySelector('game-timer')
@@ -76,7 +76,7 @@ class QuizQuestion extends window.HTMLElement {
    * Gets a new objectfrom the server
    *
    * @returns {Object} a new object
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   async getQuestion () {
     const pro = await window.fetch(this._questionURL)
@@ -89,7 +89,7 @@ class QuizQuestion extends window.HTMLElement {
    * Returns the answer that the user entered
    *
    * @returns {string} An answer
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   getAnswer () {
     let answer
@@ -111,7 +111,7 @@ class QuizQuestion extends window.HTMLElement {
    *
    * @param {String} myAnswer An answer
    * @returns {Object} returns an Object from the server
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   async sendAnswer (myAnswer) {
     const data = {
@@ -133,7 +133,7 @@ class QuizQuestion extends window.HTMLElement {
    * Controlls the returned Object that was recived from the server
    * and decides how the game should continue
    * @param {Object} answer An Object that was sent from the server
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   async checkAnswer (answer) {
     if (answer.message === 'Correct answer!') {
@@ -157,7 +157,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
  * Calls a new function depending on the question type.
  *
- * @memberof QuizQuestion
+ * @memberof QuizApp
  */
   createForm () {
     if (this._currentQuestion.alternatives) {
@@ -172,7 +172,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
    * Add a input text field in the quizForm div
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   createTextForm () {
     if (this._answerForm.childElementCount > 0) {
@@ -184,7 +184,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
    * Adds radio buttons to the quizForm div
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   createAltForm () {
     if (this._answerForm.childElementCount > 0) {
@@ -214,7 +214,7 @@ class QuizQuestion extends window.HTMLElement {
    *
    * @param {template} newTemp A HTML template
    * @param {template} newCss A HTML template
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   createGameOverTemplate (newTemp, newCss) {
     this.cleanForm(this._quizContainer)
@@ -238,7 +238,7 @@ class QuizQuestion extends window.HTMLElement {
    * @param {template} newHtmlTemplate A HTML template
    * @param {template} newCssTemplate A HTML template
    * @param {html class} oldCss A HTML class
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   changeTemplates (newHtmlTemplate, newCssTemplate, oldCss) {
     if (oldCss) {
@@ -252,7 +252,7 @@ class QuizQuestion extends window.HTMLElement {
    * Removes all child elements of the passed element
    *
    * @param {HTMLElement} element A HTML element
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   cleanForm (element) {
     while (element.hasChildNodes()) {
@@ -263,7 +263,7 @@ class QuizQuestion extends window.HTMLElement {
   /**
    * adds an event listener to a button with the class name "playAgain"
    *
-   * @memberof QuizQuestion
+   * @memberof QuizApp
    */
   playAgain () {
     this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
@@ -278,4 +278,4 @@ class QuizQuestion extends window.HTMLElement {
   }
 }
 
-window.customElements.define('quiz-question', QuizQuestion)
+window.customElements.define('quiz-question', QuizApp)

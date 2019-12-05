@@ -2,7 +2,8 @@ const template = document.createElement('template')
 template.innerHTML = `
 <style>
     :host {
-        text-align: center
+        text-align: center;
+        font-size: 30px;
     }
   button {
         font-size: 30px;
@@ -25,7 +26,6 @@ template.innerHTML = `
         background-color: #333;
         color: #f2b83a;
         width: 30%;
-        margin: 0 auto;
     }
     input[type="text"]::placeholder {
         color: #f2b83a;
@@ -36,9 +36,6 @@ template.innerHTML = `
         margin: 0px;
         padding-top: 15px;
         color: #f2b83a;
-    }
-    .description {
-        font-size: 30px;
     }
 </style>
 

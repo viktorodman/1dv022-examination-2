@@ -9,7 +9,7 @@ templateCss.innerHTML = `
         outline:none;
     }
     .wrapper {
-    width: 100%;
+    width: 80%;
     min-height: 300px;
     background-color: #333;
     margin: 0 auto;
@@ -22,18 +22,18 @@ templateCss.innerHTML = `
     }
     button {
         font-size: 30px;
-        margin-bottom: 20px;
         background-color: #f2b83a;
         transition-duration: 0.4s;
         padding-left: 30px;
         padding-right: 30px;
-        margin-top: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
     }
     button:hover {
         background-color: #cfcfcf;
     }
     input[type="text"] {
-        font-size: 30px;
+        font-size: 40px;
         text-align: center;
         margin-bottom: 20px;
         border: none;
@@ -76,13 +76,12 @@ gameTemplateCss.innerHTML = `
     text-align: center;
 }
 .quizMain {
-    height: 40%;
+    /* height: 40%; */
     margin: 0 auto;
     text-align: center;
-
 }
 .quizInfo {
-    height: 10%;
+    /* height: 10%; */
     font-size: 30px;
     padding: 10px;
 }
@@ -92,8 +91,9 @@ gameTemplateCss.innerHTML = `
 }
 .question {
     margin: 0;
-    padding-top: 60px;
-    font-size: 40px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    font-size: 50px;
     color: #f2b83a;
 }
 .playerName {

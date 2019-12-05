@@ -29,11 +29,10 @@ class QuizQuestion extends window.HTMLElement {
     this._playerName = undefined
     this._answerInput = undefined
 
-    this._intervalID = null
-    this._maxTime = 20
     this._totalTime = 0
     this._currentTime = this._maxTime
     this._timer = undefined
+    this._questionCounter = 0
   }
 
   /**
@@ -61,12 +60,12 @@ class QuizQuestion extends window.HTMLElement {
   async startGame () {
     this._timer = this.shadowRoot.querySelector('game-timer')
     this._timer.addEventListener('timezero', event => {
-      console.log('game over')
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
     })
     this._currentQuestion = await this.getQuestion()
     this.createForm()
     this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
+      event.preventDefault()
       const answer = this.getAnswer()
       const result = await this.sendAnswer(answer)
       this.checkAnswer(result)
@@ -144,14 +143,11 @@ class QuizQuestion extends window.HTMLElement {
         this.createForm()
         this._timer.resetTimer()
       } else {
-        /* this.restartTimer() */
-
         this._timer.stopTimer()
         this._totalTime = this._timer.getTotalTime()
         this.createGameOverTemplate(winTemplate, winTemplateCss)
         this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
       }
-      console.log('correct')
     } else {
       this._timer.stopTimer()
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
@@ -179,11 +175,9 @@ class QuizQuestion extends window.HTMLElement {
    * @memberof QuizQuestion
    */
   createTextForm () {
-    console.log(this._answerForm)
     if (this._answerForm.childElementCount > 0) {
       this.cleanForm(this._answerForm)
     }
-    console.log('tjoho')
     this._answerForm.appendChild(textTemplate.content.cloneNode(true))
   }
 
@@ -194,7 +188,6 @@ class QuizQuestion extends window.HTMLElement {
    */
   createAltForm () {
     if (this._answerForm.childElementCount > 0) {
-      console.log('clean')
       this.cleanForm(this._answerForm)
     }
 
@@ -231,8 +224,6 @@ class QuizQuestion extends window.HTMLElement {
 
     if (newTemp === winTemplate) {
       const highscore = document.createElement('high-score')
-      console.log(this._playerName)
-      console.log(this._totalTime)
       highscore.setAttribute('player', this._playerName)
       highscore.setAttribute('time', this._totalTime)
 
@@ -280,11 +271,9 @@ class QuizQuestion extends window.HTMLElement {
       this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
       this._questionURL = this._firstQuestion
       this._answerForm = this.shadowRoot.querySelector('.quizForm')
-      console.log('inseide')
       this._totalTime = 0
 
       this.startGame()
-      console.log('pelle')
     })
   }
 }

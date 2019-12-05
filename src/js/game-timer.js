@@ -1,5 +1,13 @@
 const template = document.createElement('template')
 template.innerHTML = `
+    <style>
+        :host {
+            font-size: 110px;
+        }
+        p {
+            margin: 0;
+        }
+    </style>
     <p class="timer"></p>
 `
 
@@ -24,15 +32,14 @@ export default class GameTimer extends window.HTMLElement {
     this.intervalID = setInterval(() => {
       this.updateTimer()
     }, 1000)
-    console.log('hej')
   }
 
   updateTimer () {
     this.currentTime -= 1
     this.timerDisplay.textContent = this.currentTime
     if (this.currentTime === 0) {
+      this.dispatchEvent(new window.CustomEvent('timezero'))
       this.stopTimer()
-      this.dispatchEvent(new window.CustomEvent('timezero', { detail: ((this.stopTime - this.startTime) / 1000) }))
     }
   }
 
@@ -49,10 +56,6 @@ export default class GameTimer extends window.HTMLElement {
   resetTimer () {
     this.timerDisplay.textContent = 20
     this.currentTime = this.maxTime
-  }
-
-  resetTotalTimer () {
-
   }
 }
 

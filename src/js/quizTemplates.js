@@ -41,7 +41,7 @@ gameTemplate.innerHTML = `
       <div class="quizForm">
       </div>
       <div class ="buttonDiv">
-        <button class="answerButton">Answer</button>
+        <button type="submit" class="answerButton">Answer</button>
       </div>
 `
 

@@ -55,8 +55,17 @@ template.innerHTML = `
         <p class="errorMessage"></p>
     </div>
 `
-
-export default class EnterName extends window.HTMLElement {
+/**
+ * Represents a name form
+ *
+ * @class EnterName
+ * @extends {window.HTMLElement}
+ */
+class EnterName extends window.HTMLElement {
+  /**
+   * Creates an instance of EnterName.
+   * @memberof EnterName
+   */
   constructor () {
     super()
     this.attachShadow({ mode: 'open' })
@@ -68,11 +77,21 @@ export default class EnterName extends window.HTMLElement {
     this.name = undefined
   }
 
+  /**
+   * Runs when the element is appended to a document-connected element
+   *
+   * @memberof QuizApp
+   */
   connectedCallback () {
     console.log(this.button)
     this.button.addEventListener('click', () => this.addName())
   }
 
+  /**
+   * Adds the entered name
+   *
+   * @memberof EnterName
+   */
   addName () {
     if (this._input.value.length > 0) {
       this.name = this._input.value

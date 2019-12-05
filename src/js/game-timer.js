@@ -10,8 +10,18 @@ template.innerHTML = `
     </style>
     <p class="timer"></p>
 `
-
-export default class GameTimer extends window.HTMLElement {
+/**
+ * Represents a timer
+ *
+ * @export
+ * @class GameTimer
+ * @extends {window.HTMLElement}
+ */
+class GameTimer extends window.HTMLElement {
+  /**
+   * Creates an instance of GameTimer.
+   * @memberof GameTimer
+   */
   constructor () {
     super()
     this.attachShadow({ mode: 'open' })
@@ -26,6 +36,11 @@ export default class GameTimer extends window.HTMLElement {
     this.stopTime = undefined
   }
 
+  /**
+   * Runs when the element is appended to a document-connected element
+   *
+   * @memberof QuizApp
+   */
   connectedCallback () {
     this.startTime = Date.now()
     this.timerDisplay.textContent = this.maxTime
@@ -34,6 +49,11 @@ export default class GameTimer extends window.HTMLElement {
     }, 1000)
   }
 
+  /**
+   * Removes a second from the timer and display the new time
+   *
+   * @memberof GameTimer
+   */
   updateTimer () {
     this.currentTime -= 1
     this.timerDisplay.textContent = this.currentTime
@@ -43,16 +63,32 @@ export default class GameTimer extends window.HTMLElement {
     }
   }
 
+  /**
+   * Stops the timer
+   *
+   * @memberof GameTimer
+   */
   stopTimer () {
     clearInterval(this.intervalID)
   }
 
+  /**
+   * Returns the total time from when the timer was started
+   *
+   * @returns {number} the total time from when the timer was started
+   * @memberof GameTimer
+   */
   getTotalTime () {
     this.stopTime = Date.now()
     const totalTime = (this.stopTime - this.startTime) / 1000
     return totalTime.toFixed(2)
   }
 
+  /**
+   * Resets the timer
+   *
+   * @memberof GameTimer
+   */
   resetTimer () {
     this.timerDisplay.textContent = 20
     this.currentTime = this.maxTime

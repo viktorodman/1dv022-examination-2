@@ -29,10 +29,8 @@ class QuizApp extends window.HTMLElement {
     this._playerName = undefined
     this._answerInput = undefined
 
-    this._totalTime = 0
-    this._currentTime = this._maxTime
     this._timer = undefined
-    this._questionCounter = 0
+
     this._quizQuestion = this.shadowRoot.querySelector('quiz-questions')
   }
 
@@ -69,29 +67,23 @@ class QuizApp extends window.HTMLElement {
     this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
       event.preventDefault()
       const answer = this.getAnswer()
-
-      this._quizQuestion.addEventListener('newQuestion', async event => {
+      const res = await this._quizQuestion.sendAnswer(answer)
+      if (res.nextURL) {
         this._currentQuestion = this._quizQuestion.setQuestion()
         this.shadowRoot.querySelector('.question').textContent = this._currentQuestion.question
         this.createForm()
         this._timer.resetTimer()
-      })
-
-      this._quizQuestion.addEventListener('win', event => {
+      }
+      if (res.message === 'Correct answer!' && !res.nextURL) {
         this._timer.stopTimer()
-        this.cleanForm(this._quizContainer)
 
         this.createGameOverTemplate(winTemplate, winTemplateCss)
         this.shadowRoot.querySelector('.timeTotal').textContent = this._timer.getTotalTime()
-        console.log('ldins')
-        event.preventDefault()
-      })
-
-      this._quizQuestion.addEventListener('lose', event => {
+      }
+      if (res.message === 'Wrong answer! :(') {
         this._timer.stopTimer()
         this.createGameOverTemplate(loseTemplate, loseTemplateCss)
-      })
-      await this._quizQuestion.sendAnswer(answer)
+      }
     })
   }
 
@@ -123,6 +115,7 @@ class QuizApp extends window.HTMLElement {
  */
   createForm () {
     this._answerForm = this.shadowRoot.querySelector('.quizForm')
+
     if (this._currentQuestion.alternatives) {
       this.createAltForm()
       this._answerInput = this.shadowRoot.querySelectorAll('input')
@@ -180,7 +173,9 @@ class QuizApp extends window.HTMLElement {
    * @memberof QuizApp
    */
   createGameOverTemplate (newTemp, newCss) {
-    this.changeTemplates(newTemp, newCss)
+    this.cleanForm(this._quizContainer)
+    this.changeTemplates(newTemp, newCss, '.gameScreen')
+
     this.playAgain()
 
     if (newTemp === winTemplate) {
@@ -203,7 +198,6 @@ class QuizApp extends window.HTMLElement {
    */
   changeTemplates (newHtmlTemplate, newCssTemplate, oldCss) {
     if (oldCss) {
-      console.log('WTF' + oldCss)
       this.shadowRoot.querySelector(oldCss).remove()
     }
     this.shadowRoot.insertBefore(newCssTemplate.content.cloneNode(true), this._style)
@@ -219,7 +213,6 @@ class QuizApp extends window.HTMLElement {
   cleanForm (element) {
     while (element.hasChildNodes()) {
       element.removeChild(element.firstChild)
-      console.log('clean')
     }
   }
 
@@ -232,7 +225,6 @@ class QuizApp extends window.HTMLElement {
     this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
       this.cleanForm(this._quizContainer)
       this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
-
       this.startGame()
     })
   }

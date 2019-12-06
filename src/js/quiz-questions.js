@@ -25,10 +25,6 @@ class QuizQuestions extends window.HTMLElement {
     return this.question
   }
 
-  setAnswer () {
-    console.log('då')
-  }
-
   async sendAnswer (myAnswer) {
     const data = {
       answer: myAnswer
@@ -46,20 +42,11 @@ class QuizQuestions extends window.HTMLElement {
     if (res.nextURL) {
       this._questionURL = await res.nextURL
       await this.getQuestion()
-      this.dispatchEvent(new window.CustomEvent('newQuestion', { detail: res }))
-    }
-    if (res.message === 'Correct answer!' && !res.nextURL) {
+    } else {
       this._questionURL = this._firstQuestion
       await this.getQuestion()
-      this.dispatchEvent(new window.CustomEvent('win'))
-      console.log('2')
     }
-    if (res.message === 'Wrong answer! :(') {
-      this._questionURL = this._firstQuestion
-      await this.getQuestion()
-      this.dispatchEvent(new window.CustomEvent('lose'))
-      console.log('3')
-    }
+    return res
   }
 }
 

@@ -83,7 +83,6 @@ class EnterName extends window.HTMLElement {
    * @memberof QuizApp
    */
   connectedCallback () {
-    console.log(this.button)
     this.button.addEventListener('click', () => this.addName())
   }
 
@@ -99,10 +98,6 @@ class EnterName extends window.HTMLElement {
     } else {
       this._error.textContent = 'Fyll i ett namn'
     }
-  }
-
-  getget () {
-    console.log('ggetaet')
   }
 }
 

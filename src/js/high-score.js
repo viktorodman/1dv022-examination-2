@@ -105,9 +105,8 @@ class HighScore extends window.HTMLElement {
   */
   connectedCallback () {
     this.getCurrentList()
-    console.log('2score')
+
     if (this.playerName && this.time) {
-      console.log('highscore')
       this.addToList()
     }
     this.updateRendering()
@@ -160,16 +159,17 @@ class HighScore extends window.HTMLElement {
    */
   addToList () {
     const lastPlace = this.currentList[this.currentList.length - 1]
-    if (this.currentList.length >= 5 && this.time < lastPlace.time) {
-      if (this.checkName()) {
-        this._storage.setItem(this.playerName, String(this.time))
-      } else {
-        this._storage.removeItem(lastPlace.name)
+    if (this.checkName()) {
+      if (this.time < Number(this._storage.getItem(this.playerName))) {
         this._storage.setItem(this.playerName, String(this.time))
       }
+    } else if (this.time < lastPlace.time && this.currentList.length === 5) {
+      this._storage.removeItem(lastPlace.name)
+      this._storage.setItem(this.playerName, String(this.time))
     } else if (this.currentList.length < 5) {
       this._storage.setItem(this.playerName, String(this.time))
     }
+
     this.getCurrentList()
     /* this._storage.removeItem(lastPlace.name) */
   }
@@ -195,9 +195,8 @@ class HighScore extends window.HTMLElement {
   checkName () {
     let nameExist = false
     this.currentList.forEach(player => {
-      if (player.name === this.playerName && player.time > this.time) {
+      if (player.name === this.playerName) {
         nameExist = true
-        console.log('name exists')
       }
     })
     return nameExist

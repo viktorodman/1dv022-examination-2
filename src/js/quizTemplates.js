@@ -2,28 +2,13 @@ const template = document.createElement('template')
 template.innerHTML = `
 
 <div class="wrapper">
-  <div class="quizContainer"> 
+<quiz-questions></quiz-questions>
+  <div class="quizContainer">
+  
     <enter-name></enter-name>
   </div>
 </div>
 `
-
-const startScreen = document.createElement('template')
-
-startScreen.innerHTML = `
-    <div>
-      <h2 class="quizTitle">QUIZ APP</h2>
-    </div>
-    <div>
-      <p class="description">Enter your name and press Play to start the quiz</p>
-    </div>
-    <div>
-      <input class="playerName" type="text" placeholder="Name"  class="enterName">
-    </div>
-    <div>
-    <button class="playButton">Play</button>
-    </div>
-    `
 
 const gameTemplate = document.createElement('template')
 
@@ -94,7 +79,6 @@ export {
   template,
   gameTemplate,
   textTemplate,
-  startScreen,
   altTemplate,
   winTemplate,
   loseTemplate

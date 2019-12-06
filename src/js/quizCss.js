@@ -49,21 +49,6 @@ templateCss.innerHTML = `
     }
     </style>
 `
-const startScreenCss = document.createElement('template')
-startScreenCss.innerHTML = `
-    <style class="startScreen">
-    .quizTitle {
-        font-size: 60px;
-        margin: 0px;
-        padding-top: 15px;
-        color: #f2b83a;
-    }
-    .description {
-        font-size: 30px;
-    }
-    
-    </style>
-`
 
 const gameTemplateCss = document.createElement('template')
 gameTemplateCss.innerHTML = `
@@ -149,7 +134,6 @@ loseTemplateCss.innerHTML = `
 
 export {
   templateCss,
-  startScreenCss,
   gameTemplateCss,
   winTemplateCss,
   loseTemplateCss

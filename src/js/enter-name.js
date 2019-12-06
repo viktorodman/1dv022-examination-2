@@ -100,6 +100,10 @@ class EnterName extends window.HTMLElement {
       this._error.textContent = 'Fyll i ett namn'
     }
   }
+
+  getget () {
+    console.log('ggetaet')
+  }
 }
 
 window.customElements.define('enter-name', EnterName)

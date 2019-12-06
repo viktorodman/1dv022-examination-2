@@ -33,6 +33,7 @@ class QuizApp extends window.HTMLElement {
     this._currentTime = this._maxTime
     this._timer = undefined
     this._questionCounter = 0
+    this._quizQuestion = this.shadowRoot.querySelector('quiz-questions')
   }
 
   /**
@@ -46,8 +47,6 @@ class QuizApp extends window.HTMLElement {
       this._playerName = event.detail
       this.cleanForm(this._quizContainer)
       this.changeTemplates(gameTemplate, gameTemplateCss)
-      this._answerForm = this.shadowRoot.querySelector('.quizForm')
-
       this.startGame()
     })
   }
@@ -59,30 +58,41 @@ class QuizApp extends window.HTMLElement {
    */
   async startGame () {
     this._timer = this.shadowRoot.querySelector('game-timer')
+
     this._timer.addEventListener('timezero', event => {
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
     })
-    this._currentQuestion = await this.getQuestion()
+
+    this._currentQuestion = this._quizQuestion.setQuestion()
+    this.shadowRoot.querySelector('.question').textContent = this._currentQuestion.question
     this.createForm()
     this.shadowRoot.querySelector('.answerButton').addEventListener('click', async event => {
       event.preventDefault()
       const answer = this.getAnswer()
-      const result = await this.sendAnswer(answer)
-      this.checkAnswer(result)
-    })
-  }
 
-  /**
-   * Gets a new objectfrom the server
-   *
-   * @returns {Object} a new object
-   * @memberof QuizApp
-   */
-  async getQuestion () {
-    const pro = await window.fetch(this._questionURL)
-    const res = await pro.json()
-    this.shadowRoot.querySelector('.question').textContent = res.question
-    return res
+      this._quizQuestion.addEventListener('newQuestion', async event => {
+        this._currentQuestion = this._quizQuestion.setQuestion()
+        this.shadowRoot.querySelector('.question').textContent = this._currentQuestion.question
+        this.createForm()
+        this._timer.resetTimer()
+      })
+
+      this._quizQuestion.addEventListener('win', event => {
+        this._timer.stopTimer()
+        this.cleanForm(this._quizContainer)
+
+        this.createGameOverTemplate(winTemplate, winTemplateCss)
+        this.shadowRoot.querySelector('.timeTotal').textContent = this._timer.getTotalTime()
+        console.log('ldins')
+        event.preventDefault()
+      })
+
+      this._quizQuestion.addEventListener('lose', event => {
+        this._timer.stopTimer()
+        this.createGameOverTemplate(loseTemplate, loseTemplateCss)
+      })
+      await this._quizQuestion.sendAnswer(answer)
+    })
   }
 
   /**
@@ -107,59 +117,12 @@ class QuizApp extends window.HTMLElement {
   }
 
   /**
-   * Sends a answer to the server
-   *
-   * @param {String} myAnswer An answer
-   * @returns {Object} returns an Object from the server
-   * @memberof QuizApp
-   */
-  async sendAnswer (myAnswer) {
-    const data = {
-      answer: myAnswer
-    }
-
-    const res = await window.fetch(this._currentQuestion.nextURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-
-    return res.json()
-  }
-
-  /**
-   * Controlls the returned Object that was recived from the server
-   * and decides how the game should continue
-   * @param {Object} answer An Object that was sent from the server
-   * @memberof QuizApp
-   */
-  async checkAnswer (answer) {
-    if (answer.message === 'Correct answer!') {
-      if (answer.nextURL) {
-        this._questionURL = answer.nextURL
-        this._currentQuestion = await this.getQuestion()
-        this.createForm()
-        this._timer.resetTimer()
-      } else {
-        this._timer.stopTimer()
-        this._totalTime = this._timer.getTotalTime()
-        this.createGameOverTemplate(winTemplate, winTemplateCss)
-        this.shadowRoot.querySelector('.timeTotal').textContent = this._totalTime
-      }
-    } else {
-      this._timer.stopTimer()
-      this.createGameOverTemplate(loseTemplate, loseTemplateCss)
-    }
-  }
-
-  /**
  * Calls a new function depending on the question type.
  *
  * @memberof QuizApp
  */
   createForm () {
+    this._answerForm = this.shadowRoot.querySelector('.quizForm')
     if (this._currentQuestion.alternatives) {
       this.createAltForm()
       this._answerInput = this.shadowRoot.querySelectorAll('input')
@@ -217,15 +180,13 @@ class QuizApp extends window.HTMLElement {
    * @memberof QuizApp
    */
   createGameOverTemplate (newTemp, newCss) {
-    this.cleanForm(this._quizContainer)
-    this.changeTemplates(newTemp, newCss, '.gameScreen')
-
+    this.changeTemplates(newTemp, newCss)
     this.playAgain()
 
     if (newTemp === winTemplate) {
       const highscore = document.createElement('high-score')
       highscore.setAttribute('player', this._playerName)
-      highscore.setAttribute('time', this._totalTime)
+      highscore.setAttribute('time', this._timer.getTotalTime())
 
       this._quizContainer.appendChild(highscore)
     }
@@ -242,6 +203,7 @@ class QuizApp extends window.HTMLElement {
    */
   changeTemplates (newHtmlTemplate, newCssTemplate, oldCss) {
     if (oldCss) {
+      console.log('WTF' + oldCss)
       this.shadowRoot.querySelector(oldCss).remove()
     }
     this.shadowRoot.insertBefore(newCssTemplate.content.cloneNode(true), this._style)
@@ -257,6 +219,7 @@ class QuizApp extends window.HTMLElement {
   cleanForm (element) {
     while (element.hasChildNodes()) {
       element.removeChild(element.firstChild)
+      console.log('clean')
     }
   }
 
@@ -269,13 +232,10 @@ class QuizApp extends window.HTMLElement {
     this.shadowRoot.querySelector('.playAgain').addEventListener('click', event => {
       this.cleanForm(this._quizContainer)
       this.changeTemplates(gameTemplate, gameTemplateCss, '.gameOverTemp')
-      this._questionURL = this._firstQuestion
-      this._answerForm = this.shadowRoot.querySelector('.quizForm')
-      this._totalTime = 0
 
       this.startGame()
     })
   }
 }
 
-window.customElements.define('quiz-question', QuizApp)
+window.customElements.define('quiz-app', QuizApp)

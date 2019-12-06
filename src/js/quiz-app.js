@@ -1,6 +1,14 @@
+/**
+ * Module for QuizApp
+ *
+ * @module src/js/quiz-app
+ * @author Viktor Ödman
+ * @version 1.1.0
+*/
 
 import { template, gameTemplate, textTemplate, altTemplate, winTemplate, loseTemplate } from './quizTemplates.js'
 import { templateCss, gameTemplateCss, winTemplateCss, loseTemplateCss } from './quizCss.js'
+
 /**
  * Represents a QuizApp
  *

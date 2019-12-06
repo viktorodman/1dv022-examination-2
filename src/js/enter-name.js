@@ -1,3 +1,11 @@
+/**
+ * Module for EnterName
+ *
+ * @module src/js/enter-name
+ * @author Viktor Ödman
+ * @version 1.1.0
+*/
+
 const template = document.createElement('template')
 template.innerHTML = `
 <style>

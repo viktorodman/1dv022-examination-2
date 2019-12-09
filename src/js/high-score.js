@@ -166,18 +166,22 @@ class HighScore extends window.HTMLElement {
    * @memberof HighScore
    */
   addToList () {
-    const lastPlace = this.currentList[this.currentList.length - 1]
-    if (this.checkName()) {
-      if (this.time < Number(this._storage.getItem(this.playerName))) {
+    if (this.currentList.length > 0) {
+      const lastPlace = this.currentList[this.currentList.length - 1]
+
+      if (this.checkName()) {
+        if (this.time < Number(this._storage.getItem(this.playerName))) {
+          this._storage.setItem(this.playerName, String(this.time))
+        }
+      } else if (this.time < lastPlace.time && this.currentList.length === 5) {
+        this._storage.removeItem(lastPlace.name)
+        this._storage.setItem(this.playerName, String(this.time))
+      } else if (this.currentList.length < 5) {
         this._storage.setItem(this.playerName, String(this.time))
       }
-    } else if (this.time < lastPlace.time && this.currentList.length === 5) {
-      this._storage.removeItem(lastPlace.name)
-      this._storage.setItem(this.playerName, String(this.time))
-    } else if (this.currentList.length < 5) {
+    } else {
       this._storage.setItem(this.playerName, String(this.time))
     }
-
     this.getCurrentList()
     /* this._storage.removeItem(lastPlace.name) */
   }

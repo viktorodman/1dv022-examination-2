@@ -65,8 +65,10 @@ class QuizApp extends window.HTMLElement {
   async startGame () {
     this._timer = this.shadowRoot.querySelector('game-timer')
 
-    this._timer.addEventListener('timezero', event => {
+    this._timer.addEventListener('timezero', async event => {
       this.createGameOverTemplate(loseTemplate, loseTemplateCss)
+      this._quizQuestion.setFirstQuestion()
+      await this._quizQuestion.getQuestion()
     })
 
     this._currentQuestion = this._quizQuestion.setQuestion()

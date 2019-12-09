@@ -55,6 +55,10 @@ class QuizQuestions extends window.HTMLElement {
     return this.question
   }
 
+  setFirstQuestion () {
+    this._questionURL = this._firstQuestion
+  }
+
   /**
    * Sends a answer to the the server and recives a message
    *
@@ -80,7 +84,7 @@ class QuizQuestions extends window.HTMLElement {
       this._questionURL = await res.nextURL
       await this.getQuestion()
     } else {
-      this._questionURL = this._firstQuestion
+      this.setFirstQuestion()
       await this.getQuestion()
     }
     return res
